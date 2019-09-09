@@ -71,6 +71,16 @@ class RecordTest extends TestCase
         $this->assertArrayHasKey('id', $dataFrom);
         $this->assertArrayHasKey('name', $dataFrom);
     }
+
+    public function testCanInstanciateRecordAndLoadTheDataById()
+    {
+        Transaction::open('sqlite');
+        $product = new Product(1);
+        Transaction::close();
+
+        $this->assertEquals(1, $product->id);
+        $this->assertEquals('Product 01', $product->name);
+    }
 }
 
 class Product extends Record

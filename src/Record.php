@@ -27,34 +27,20 @@ abstract class Record
      */
     protected $data;
 
-    public function getEntity()
-    {
-        return static::TABLE_NAME;
-    }
-
-    public function getPrimaryKey()
-    {
-        return static::PRIMARY_KEY;
-    }
-
     /**
-     * Fill the object properties by passing an associative array
+     * Constructor.
      * 
-     * @param array $data
+     * @param int $id
      */
-    public function fromArray($data)
+    public function __construct($id = null)
     {
-        $this->data = $data;
-    }
+        if ($id) {
+            $object = $this->load($id);
 
-    /**
-     * Return object properties as an associative array
-     * 
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->data;
+            if ($object) {
+                $this->fromArray($object->toArray());
+            }
+        }
     }
 
     /**
@@ -109,6 +95,51 @@ abstract class Record
         return isset($this->data[$prop]);
     }
 
+    /**
+     * Get the table name
+     * 
+     * @param string
+     */
+    public function getEntity()
+    {
+        return static::TABLE_NAME;
+    }
+
+    /**
+     * Get the primary key field name
+     * 
+     * @param string
+     */
+    public function getPrimaryKey()
+    {
+        return static::PRIMARY_KEY;
+    }
+
+    /**
+     * Fill the object properties by passing an associative array
+     * 
+     * @param array $data
+     */
+    public function fromArray($data)
+    {
+        $this->data = $data;
+    }
+
+    /**
+     * Return object properties as an associative array
+     * 
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Load an object attributes by id
+     * 
+     * @param int $id
+     */
     public function load($id)
     {
         // build SELECT instruction
