@@ -105,6 +105,54 @@ class RecordTest extends TestCase
         $this->assertEquals(null, $product->escape(null));
         $this->assertEquals('NULL', $product->escape(''));
     }
+
+    public function testCanPrepareValues()
+    {
+        $someString = "Some String Value";
+        $escapedString = "'".\addslashes($someString)."'";
+        $data = [
+            'some_string' => $someString,
+            'bool_true' => true,
+            'bool_false' => false,
+            'price' => 12.50,
+            'null_field' => null,
+            'empty_field' => '',
+        ];
+
+        $product = new Product;
+        $prepared = $product->prepare($data);
+
+        $this->assertEquals($escapedString, $prepared['some_string']);
+        $this->assertEquals('TRUE', $prepared['bool_true']);
+        $this->assertEquals('FALSE', $prepared['bool_false']);
+        $this->assertEquals(12.50, $prepared['price']);
+        $this->assertTrue(!isset($prepared['null_field']));
+        $this->assertEquals('NULL', $prepared['empty_field']);
+    }
+
+    public function testCanInsertDataUsingTheStoreMethod()
+    {
+        Transaction::open('sqlite');
+        $product = new Product;
+        $product->name = 'Product 04';
+        $product->store();
+        Transaction::close();
+
+        $this->assertEquals(4, $product->id);
+        $this->assertEquals('Product 04', $product->name);
+    }
+
+    public function testCanUpdatedDataUsingTheStoreMethod()
+    {
+        Transaction::open('sqlite');
+        $product = new Product(3);
+        $product->name = 'Product 03 - UPDATED';
+        $product->store();
+        Transaction::close();
+
+        $this->assertEquals(3, $product->id);
+        $this->assertEquals('Product 03 - UPDATED', $product->name);
+    }
 }
 
 class Product extends Record

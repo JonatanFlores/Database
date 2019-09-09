@@ -100,7 +100,7 @@ abstract class Record
      */
     public function __clone()
     {
-        unset($this->data[static::PRIMARY_KEY]);
+        unset($this->data[$this->getPrimaryKey()]);
     }
 
     /**
@@ -150,9 +150,11 @@ abstract class Record
      */
     public function load($id)
     {
+        $table = $this->getEntity();
+        $primaryKey = $this->getPrimaryKey();
+
         // build SELECT instruction
-        $sql = "SELECT * FROM {$this->getEntity()}";
-        $sql .= " WHERE id={$this->getPrimaryKey()}";
+        $sql = "SELECT * FROM {$table} WHERE {$primaryKey} = {$id}";
 
         // get the current active transaction
         if ($conn = Transaction::get()) {
@@ -200,6 +202,96 @@ abstract class Record
             return $value;
         } else {
             return 'NULL';
+        }
+    }
+
+    /**
+     * Escape an array of data, preventing some SQL injection
+     * 
+     * @param array $data
+     * 
+     * @return array
+     */
+    public function prepare($data)
+    {
+        $prepared = [];
+
+        foreach ($data as $key => $value) {
+            if (is_scalar($value)) {
+                $prepared[$key] = $this->escape($value);
+            }
+        }
+
+        return $prepared;
+    }
+
+    /**
+     * Persists data into database
+     */
+    public function store()
+    {
+        $prepared = $this->prepare($this->data);
+        $id = $this->getPrimaryKey();
+
+        // check if hasn't ID or if there isn't a database record
+        if (empty($this->data[$id]) || !$this->load($this->{$id})) {
+            if (empty($this->data[$id])) {
+                $this->{$id} = $this->getLast() + 1;
+                $prepared[$id] = $this->{$id};
+            }
+
+            // creates an SQL statement of INSERT
+            $sql = "INSERT INTO {$this->getEntity()} ";
+            $sql .= '('.implode(', ', array_keys($prepared)).')';
+            $sql .= ' VALUES ';
+            $sql .= '('.implode(', ', array_values($prepared)).')';
+        } else {
+            // build an SQL statement of UPDATE
+            $sql = "UPDATE {$this->getEntity()}";
+            $set = [];
+
+            // build pares: column=value
+            if ($prepared) {
+                foreach ($prepared as $column => $value) {
+                    if ($column !== $id) {
+                        $set[] = "{$column} = {$value}";
+                    }
+                }
+            }
+
+            $sql .= ' SET '.implode(', ', $set);
+            $sql .= " WHERE {$id} = " . (int) $this->data[$id];
+        }
+
+        // Get the current active transaction
+        if ($conn = Transaction::get()) {
+            // TODO generates a log of the SQL instruction
+            // TODO use prepared statement
+            $result = $conn->exec($sql);
+            return $result;
+        } else {
+            throw new Exception('There isn\'t an active transaction');
+        }
+    }
+
+    /**
+     * Get the last inserted id of the current 
+     * table and active transaction
+     */
+    private function getLast()
+    {
+        if ($conn = Transaction::get()) {
+            $sql = "SELECT MAX({$this->getPrimaryKey()}) FROM {$this->getEntity()}";
+
+            // TODO generates a log for the SQL statement
+            $result = $conn->query($sql);
+
+            // return the database record data
+            $row = $result->fetch();
+
+            return $row[0];
+        } else {
+            throw new Exception('There isn\'t an active transaction');
         }
     }
 }
