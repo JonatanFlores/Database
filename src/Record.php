@@ -170,4 +170,16 @@ abstract class Record
             throw new Exception('There isn\'t an active transaction');
         }
     }
+
+    /**
+     * Alias for the load method and fill the object attributes by id
+     * 
+     * @param int $id
+     */
+    public function find($id)
+    {
+        $classname = get_called_class();
+        $ar = new $classname;
+        return $ar->load($id);
+    }
 }

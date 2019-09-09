@@ -81,6 +81,16 @@ class RecordTest extends TestCase
         $this->assertEquals(1, $product->id);
         $this->assertEquals('Product 01', $product->name);
     }
+
+    public function testCanLoadRecordUsingTheFindMethod()
+    {
+        Transaction::open('sqlite');
+        $product = (new Product)->find(1);
+        Transaction::close();
+
+        $this->assertEquals(1, $product->id);
+        $this->assertEquals('Product 01', $product->name);
+    }
 }
 
 class Product extends Record
