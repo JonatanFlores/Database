@@ -48,6 +48,16 @@ abstract class Record
     }
 
     /**
+     * Return object properties as an associative array
+     * 
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->data;
+    }
+
+    /**
      * Dinamically set attribute data through the fromArray method
      * 
      * @param string $prop
