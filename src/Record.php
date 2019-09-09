@@ -182,4 +182,24 @@ abstract class Record
         $ar = new $classname;
         return $ar->load($id);
     }
+
+    /**
+     * Escape string, boolean and empty values
+     * 
+     * @param mixed $value
+     */
+    public function escape($value)
+    {
+        if (is_string($value) && !empty($value)) {
+            // add back slashes
+            $value = addslashes($value);
+            return "'$value'";
+        } elseif (is_bool($value)) {
+            return $value ? 'TRUE' : 'FALSE';
+        } elseif ($value !== '') {
+            return $value;
+        } else {
+            return 'NULL';
+        }
+    }
 }

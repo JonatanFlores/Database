@@ -91,6 +91,20 @@ class RecordTest extends TestCase
         $this->assertEquals(1, $product->id);
         $this->assertEquals('Product 01', $product->name);
     }
+
+    public function testCanEscapeValues()
+    {
+        $someString = "Some String Value";
+        $escapedString = "'".\addslashes($someString)."'";
+        $product = new Product;
+
+        $this->assertEquals($escapedString, $product->escape($someString));
+        $this->assertEquals('TRUE', $product->escape(true));
+        $this->assertEquals('FALSE', $product->escape(false));
+        $this->assertEquals(12.50, $product->escape(12.50));
+        $this->assertEquals(null, $product->escape(null));
+        $this->assertEquals('NULL', $product->escape(''));
+    }
 }
 
 class Product extends Record
