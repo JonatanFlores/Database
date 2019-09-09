@@ -96,6 +96,14 @@ abstract class Record
     }
 
     /**
+     * Remove the id when cloning the object
+     */
+    public function __clone()
+    {
+        unset($this->data[static::PRIMARY_KEY]);
+    }
+
+    /**
      * Get the table name
      * 
      * @param string
