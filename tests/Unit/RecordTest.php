@@ -48,6 +48,17 @@ class RecordTest extends TestCase
         $this->assertEquals(1, $product->id);
         $this->assertEquals('Product 01', $product->name);
     }
+
+    public function testCanFillObjectPropertiesByPassingAnArray()
+    {
+        $data = ['id' => 1, 'name' => 'Test Product'];
+
+        $product = new Product;
+        $product->fromArray($data);
+
+        $this->assertEquals($data['id'], $product->id);
+        $this->assertEquals($data['name'], $product->name);
+    }
 }
 
 class Product extends Record
