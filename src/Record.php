@@ -275,6 +275,31 @@ abstract class Record
     }
 
     /**
+     * Remove record from database by id or using the pre-loaded object.
+     * 
+     * @param int $id
+     */
+    public function delete($id = null)
+    {
+        $id = $id ? (int) $id : $this->id;
+        $table = $this->getEntity();
+        $primaryKey = $this->getPrimaryKey();
+
+        // build the DELETE statement
+        $sql = "DELETE FROM {$table} WHERE {$primaryKey} = {$id}";
+
+        // Get the current active transaction
+        if ($conn = Transaction::get()) {
+            // TODO generates a log of the SQL instruction
+            // TODO use prepared statement
+            $result = $conn->exec($sql);
+            return $result;
+        } else {
+            throw new Exception('There isn\'t an active transaction');
+        }
+    }
+
+    /**
      * Get the last inserted id of the current 
      * table and active transaction
      */

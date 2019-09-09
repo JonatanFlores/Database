@@ -153,6 +153,18 @@ class RecordTest extends TestCase
         $this->assertEquals(3, $product->id);
         $this->assertEquals('Product 03 - UPDATED', $product->name);
     }
+
+    public function testCanDeleteRecordFromTheDatabase()
+    {
+        Transaction::open('sqlite');
+        $id = 1;
+        (new Product)->delete($id);
+        $product = new Product($id);
+        Transaction::close();
+
+        $this->assertNull($product->id);
+        $this->assertNull($product->name);
+    }
 }
 
 class Product extends Record
