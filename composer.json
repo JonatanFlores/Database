@@ -1,0 +1,25 @@
+{
+    "name": "jonatanflores/database",
+    "description": "Simple database layer using transactions and activerecord design pattern",
+    "keywords": ["transactions", "database layer", "php"],
+    "homepage": "https://github.com/jonatanflores/database",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jonatan Flores",
+            "email": "jonatafloress@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "jonatafloress@gmail.com"
+    },
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Database\\": "src/"
+        }
+    }
+}
