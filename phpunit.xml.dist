@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.0/phpunit.xsd"
+          backupGlobals="false"
+          stopOnFailure="true"
+          beStrictAboutTestsThatDoNotTestAnything="true"
+          beStrictAboutOutputDuringTests="true"
+          verbose="true"
+          colors="true"
+	      bootstrap="vendor/autoload.php">
+
+    <php>
+        <ini name="date.timezone" value="America/Sao_Paulo"/>
+        <env name="ENV" value="test" />
+    </php>
+
+    <testsuites>
+        <testsuite name="Unit Tests Suite">
+            <directory>./tests/Unit/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
