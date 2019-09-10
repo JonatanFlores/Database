@@ -74,4 +74,24 @@ class CriteriaTest extends TestCase
 
         $this->assertEquals('(id IN (12, 16, 20))', $criteria->dump());
     }
+
+    public function testCanSetPropertyWithValue()
+    {
+        $criteria = new Criteria;
+        $criteria->setProperty('ORDER', 'id DESC');
+        $criteria->setProperty('LIMIT', 10);
+
+        $this->assertEquals('id DESC', $criteria->getProperty('ORDER'));
+        $this->assertEquals(10, $criteria->getProperty('LIMIT'));
+    }
+
+    public function testCanSetPropertyWithoutValue()
+    {
+        $criteria = new Criteria;
+        $criteria->setProperty('ORDER');
+        $criteria->setProperty('LIMIT');
+
+        $this->assertNull($criteria->getProperty('ORDER'));
+        $this->assertNull($criteria->getProperty('LIMIT'));
+    }
 }

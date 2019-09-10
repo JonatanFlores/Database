@@ -13,6 +13,9 @@ class Criteria extends Expression
     /** @var array $properties */
     private $properties;
 
+    /**
+     * Constructor.
+     */
     public function __construct()
     {
         $this->expressions = [];
@@ -20,6 +23,8 @@ class Criteria extends Expression
     }
 
     /**
+     * Add expressions for building SQL filters
+     * 
      * @param Expression $expression
      * @param string $operator
      */
@@ -35,6 +40,11 @@ class Criteria extends Expression
         $this->operators[] = $operator;
     }
 
+    /**
+     * Returns the SQL filters (expressions) generated
+     * 
+     * @return string
+     */
     public function dump()
     {
         // concatenate the list of expressions
@@ -49,6 +59,34 @@ class Criteria extends Expression
                 $result = trim($result);
                 return "({$result})";
             }
+        }
+    }
+
+    /**
+     * Defines characteristics of the SQL instructions, such as: 
+     * ORDER, LIMIT, OFFSET etc.
+     * 
+     * @param string $property
+     * @param mixed $value
+     */
+    public function setProperty($property, $value = null)
+    {
+        if (isset($value)) {
+            $this->properties[$property] = $value;
+        } else {
+            $this->properties[$property] = null;
+        }
+    }
+
+    /**
+     * Gets SQL characteristics previously defined by the `setProperty` method
+     * 
+     * @return mixed
+     */
+    public function getProperty($property)
+    {
+        if (isset($this->properties[$property])) {
+            return $this->properties[$property];
         }
     }
 }
