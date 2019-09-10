@@ -17,9 +17,13 @@ class FilterTest extends TestCase
     public function testItHasTheConstantsLogicOperators()
     {
         $filter = new ReflectionClass(Filter::class);
+        $operators = $filter->getConstants();
 
-        $this->assertArrayHasKey('AND_OPERATOR', $filter->getConstants());
-        $this->assertArrayHasKey('OR_OPERATOR', $filter->getConstants());
+        $this->assertArrayHasKey('AND_OPERATOR', $operators);
+        $this->assertArrayHasKey('OR_OPERATOR', $operators);
+
+        $this->assertEquals('AND ', $operators['AND_OPERATOR']);
+        $this->assertEquals('OR ', $operators['OR_OPERATOR']);
     }
 
     public function testCanBuildFilters()
