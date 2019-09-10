@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use Database\Record;
 use Database\Connection;
 use Database\Transaction;
 use PHPUnit\Framework\TestCase;
+use Tests\Unit\Mocks\Product;
 
 class RecordTest extends TestCase
 {
@@ -166,9 +166,3 @@ class RecordTest extends TestCase
         $this->assertNull($product->name);
     }
 }
-
-class Product extends Record
-{
-    const TABLE_NAME = 'products';
-}
-
